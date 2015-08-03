@@ -1,0 +1,24 @@
+apply plugin: 'groovy'
+
+group = 'com.github.tonybaines'
+version = '0.0.1-SNAPSHOT'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  compile([
+      'org.codehaus.groovy:groovy-all:2.4.4',
+      'org.slf4j:slf4j-api:[1.6.1,)',
+  ])
+
+  testCompile([
+    'org.spockframework:spock-core:1.0-groovy-2.4',
+  ])
+
+}
