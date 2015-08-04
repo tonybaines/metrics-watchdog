@@ -1,0 +1,13 @@
+
+[quote, Dropwizard Team, https://dropwizard.github.io/metrics/3.1.0/manual/core/#man-core-histograms]
+-----
+A histogram with an exponentially decaying reservoir produces quantiles which are
+representative of (roughly) the last five minutes of data. It does so by using a
+forward-decaying priority reservoir with an exponential weighting towards newer
+data. Unlike the uniform reservoir, an exponentially decaying reservoir represents
+recent data, allowing you to know very quickly if the distribution of the data
+has changed. Timers use histograms with exponentially decaying reservoirs by default.
+-----
+
+Tentative: use 50th percentile as the value to compare over time
+may be useful to compare e.g. p50 and p999 - need to understand the maths
