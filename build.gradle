@@ -13,16 +13,28 @@ repositories {
 }
 
 dependencies {
+  runtime([
+  ])
+
   compile([
     'org.codehaus.groovy:groovy-all:2.4.4',
     'org.slf4j:slf4j-api:[1.6.1,)',
     'com.github.tonybaines:gestalt:1.0.2',
     'org.codehaus.gpars:gpars:1.2.1',
     'io.dropwizard.metrics:metrics-core:3.1.2',
+    'io.dropwizard.metrics:metrics-jvm:3.1.2',
   ])
 
   testCompile([
     'org.spockframework:spock-core:1.0-groovy-2.4',
   ])
 
+}
+
+test {
+  systemProperty 'com.sun.management.jmxremote', ''
+  systemProperty 'com.sun.management.jmxremote.port', '9199'
+  systemProperty 'com.sun.management.jmxremote.local.only', 'false'
+  systemProperty 'com.sun.management.jmxremote.authenticate', 'false'
+  systemProperty 'com.sun.management.jmxremote.ssl', 'false'
 }

@@ -6,7 +6,6 @@ import javax.management.MBeanServerConnection
 import javax.management.ObjectName
 import javax.management.remote.JMXConnectorFactory as JmxFactory
 import javax.management.remote.JMXServiceURL as JmxUrl
-import javax.xml.crypto.dsig.spec.HMACParameterSpec
 
 import static groovyx.gpars.GParsPool.withPool
 
@@ -30,6 +29,16 @@ class MetricsWatcher {
     "OneMinuteRate"    : 'm1_rate',
     "MeanRate"         : 'mean_rate',
     "RateUnit"         : 'rate_units',
+    "Value"            : 'value'
+  ]
+
+  private static final JMX_NAME_FOR_JSON_METERS = [
+    "Count"            : 'count',
+    "FifteenMinuteRate": 'm15_rate',
+    "FiveMinuteRate"   : 'm5_rate',
+    "OneMinuteRate"    : 'm1_rate',
+    "MeanRate"         : 'mean_rate',
+    "RateUnit"         : 'units',
     "Value"            : 'value'
   ]
 
@@ -62,7 +71,8 @@ class MetricsWatcher {
       gaugeData = findBeansOfType('JmxGauge').collectParallel(asDataMap)
       counterData = findBeansOfType('JmxCounter').collectParallel(asDataMap)
       histogramData = findBeansOfType('JmxHistogram').collectParallel(asDataMap)
-      meterData = findBeansOfType('JmxMeter').collectParallel(asDataMap)
+      meterData = findBeansOfType('JmxMeter')
+        .collectParallel{ [it.name().canonicalName, mapFor(it, {x -> JMX_NAME_FOR_JSON_METERS[x]})] }
 
     }
     // Translate the results into a Map
@@ -76,15 +86,11 @@ class MetricsWatcher {
     ])
   }
 
-  Map mapFor(GroovyMBean bean) {
+  Map mapFor(GroovyMBean bean, translator={x -> JMX_NAME_TO_JSON[x]}) {
     bean.listAttributeNames().collect { name ->
-      [translate(name), bean.getProperty(name)]
+      [translator(name), bean.getProperty(name)]
     }
     .grep{ name,map -> name != null}
     .collectEntries{it}
-  }
-
-  String translate(name) {
-    JMX_NAME_TO_JSON[name]
   }
 }
